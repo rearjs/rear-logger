@@ -1,0 +1,47 @@
+{
+  "name": "rear-logger",
+  "versione": "0.1.0-alpha.3",
+  "author": "Roberto Mauro <erremauro@icloud.com>",
+  "license": "MIT",
+  "repository": "https://github.com/rearjs/rear-logger.git",
+  "scripts": {
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
+    "test": "./node_modules/.bin/jest",
+    "lint": "./node_modules/.bin/eslint ./src/ --fix && ./node_modules/.bin/flow"
+  },
+  "dependencies": {
+    "ansi-styles": "^3.0.0",
+    "humps": "^2.0.0",
+    "readline": "^1.3.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-eslint": "^7.2.3",
+    "babel-jest": "^20.0.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-rear": "^1.0.2",
+    "babel-preset-stage-0": "^6.24.1",
+    "chokidar": "^1.7.0",
+    "eslint": "^3.19.0",
+    "eslint-config-rear": "^1.0.4",
+    "eslint-plugin-flowtype": "^2.33.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
+    "eslint-plugin-react": "^7.0.1",
+    "flow-bin": "^0.47.0",
+    "jest": "^20.0.3",
+    "rimraf": "^2.6.1"
+  },
+  "babel": {
+    "presets": [
+      "rear"
+    ],
+    "ignore": [
+      "*.spec.js"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "rear"
+  }
+}
