@@ -1,8 +1,8 @@
-const RearLogger = require('../index')
+var RearLogger = require('../index');
 
-test('Should create logger', () => {
-  const emoji = require('../lib/emoji');
-  const logger = RearLogger('test', {
+test('Should create logger', function () {
+  var emoji = require('../lib/emoji');
+  var logger = RearLogger('test', {
     showName: true,
     showTimeLabel: false,
     showDiffLabel: false,
@@ -12,9 +12,9 @@ test('Should create logger', () => {
   expect(logger).toBeDefined();
 });
 
-test('Should log message to stdout', () => {
-  const mockStdOut = jest.fn();
-  const logger = RearLogger('logMessage', {
+test('Should log message to stdout', function () {
+  var mockStdOut = jest.fn();
+  var logger = RearLogger('logMessage', {
     stdout: mockStdOut
   });
 
@@ -23,10 +23,10 @@ test('Should log message to stdout', () => {
   expect(mockStdOut.mock.calls.length).toBe(1);
 });
 
-test('Should log error message to stderr', () => {
-  const mockStdOut = jest.fn();
-  const mockStdErr = jest.fn();
-  const logger = RearLogger('logErrorMessage', {
+test('Should log error message to stderr', function () {
+  var mockStdOut = jest.fn();
+  var mockStdErr = jest.fn();
+  var logger = RearLogger('logErrorMessage', {
     stdout: mockStdOut,
     stderr: mockStdErr
   });
@@ -37,15 +37,15 @@ test('Should log error message to stderr', () => {
   expect(mockStdErr.mock.calls.length).toBe(1);
 });
 
-test('Should format message', () => {
-  const expected = '{color: blue}{} This should be formatted';
-  const mockStdOut = jest.fn();
-  const logger = RearLogger('formatter', {
+test('Should format message', function () {
+  var expected = '{color: blue}{} This should be formatted';
+  var mockStdOut = jest.fn();
+  var logger = RearLogger('formatter', {
     stdout: mockStdOut
   });
 
-  logger.info('This should be %s', 'formatted')
-  const actual = mockStdOut.mock.calls[0][0]
+  logger.info('This should be %s', 'formatted');
+  var actual = mockStdOut.mock.calls[0][0];
 
-  expect(actual).toBe(expected)
-})
+  expect(actual).toBe(expected);
+});
