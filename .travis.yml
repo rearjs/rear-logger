@@ -13,8 +13,8 @@ env:
 
 script:
   - 'if [ "$JOB" = "test" ]; then make test; fi'
-  - 'if [ "$JOB" = "test-coverage" ]; then make test-ci-coverage; fi'
-  - 'if [ "$JOB" = "lint" ]; then make lint && make flow; fi'
+#  - 'if [ "$JOB" = "test-coverage" ]; then make test-ci-coverage; fi'
+#  - 'if [ "$JOB" = "lint" ]; then make lint && make flow; fi'
 
 # Uncomment to define a build matrix.
 # Use "include/exclude" to add or remove job to the matrix.
