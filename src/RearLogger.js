@@ -127,6 +127,22 @@ class RearLogger {
   log (message: string, ...args: Array<any>): void {
     return this.message.call(this, 'none', message || '', ...args)
   }
+  
+  warn (...args: Array<any>): void {
+    if (!args) return
+    if (typeof args[0] === 'boolean' && !args[0]) return
+    
+    let message = ''
+    
+    if (typeof args[0] === 'boolean' &&  typeof args[1] === 'string' ) {
+      args.splice(0, 1)
+    }
+    
+    const firstArg = args.splice(0, 1)
+    message = firstArg[0]
+    
+    return this.message.call(this, 'warn', message || '', ...args)
+  }
 
   error (message:string|Error, ...args: Array<any>): void {
     if (message instanceof Error) {
