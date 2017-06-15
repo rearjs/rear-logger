@@ -3,7 +3,7 @@ const isBrowser = require('./isBrowser')
 const emoji = require('./emoji')
 const Formatter = require('./Formatter')
 const levels = require('./levels')
-const TTYCodes = require('./TTYCodes')
+const TTYCodes = require('./ttyCodes')
 
 declare type RearLoggerProps = {
   enabled: boolean,
