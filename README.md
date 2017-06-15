@@ -1,4 +1,5 @@
 # rear-logger
+[![Build Status](https://travis-ci.org/rearjs/rear-logger.svg?branch=master)](https://travis-ci.org/rearjs/rear-logger)
 
 A logger for Rear projects.
 
@@ -95,6 +96,11 @@ Note: usually is more convenient to call the logger's `level` function as in
   **level**: The level name as defined in the levels options.
   **message**: Message to be logged
   **args**: Additional arguments
+  
+### warn (assert?: boolean, message: string, ...args: Array<any>): void
+
+Format and print a warning message. When an `assert` is provided, the message
+is conditionally printed based on the truthyness of the assertion.
 
 ### error (message: string|Error, ...args: Array<any>): void
 

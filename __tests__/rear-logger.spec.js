@@ -49,3 +49,37 @@ test('Should format message', function () {
 
   expect(actual).toBe(expected);
 });
+
+test('Should warn based on TRUE assert', function () {
+  var expected = '{color: yellow}{} This should be formatted';
+  var mockStdOut = jest.fn();
+  var logger = RearLogger('formatter', {
+    stdout: mockStdOut
+  });
+  logger.warn(1 > 0, 'This should be %s', 'formatted');
+  var actual = mockStdOut.mock.calls[0][0];
+  
+  expect(actual).toBe(expected);
+});
+
+test('Should NOT warn based on FALSE assert', function () {
+  var mockStdOut = jest.fn();
+  var logger = RearLogger('formatter', {
+    stdout: mockStdOut
+  });
+  logger.warn(false, 'This should be %s', 'formatted');
+  
+  expect(mockStdOut.mock.calls.length).toBe(0);
+});
+
+test('Should use standard warn when no assert specified', function () {
+  var expected = '{color: yellow}{} This should be formatted';
+  var mockStdOut = jest.fn();
+  var logger = RearLogger('formatter', {
+    stdout: mockStdOut
+  });
+  logger.warn('This should be %s', 'formatted');
+  var actual = mockStdOut.mock.calls[0][0];
+  
+  expect(actual).toBe(expected);
+});

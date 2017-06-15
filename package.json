@@ -5,6 +5,8 @@
   "license": "MIT",
   "repository": "https://github.com/rearjs/rear-logger.git",
   "scripts": {
+    "precommit": "yarn lint && yarn test",
+    "prepush": "yarn lint && yarn test",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "./node_modules/.bin/jest",
@@ -31,6 +33,7 @@
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1",
     "flow-bin": "^0.47.0",
+    "husky": "^0.13.4",
     "jest": "^20.0.3",
     "rimraf": "^2.6.1"
   },
