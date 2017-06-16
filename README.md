@@ -71,9 +71,13 @@ Create a new logger with given `name` and options.
 
 #### Parameters
 
-  **name**: The logger name. When `showName` property is set to `true`, the
-  name is prefixed to the logged message.
-  **props**: Custom logger properties.
+<dl>
+<dt>name</dt>
+<dd>The logger name. When <code>showName</code> property is set to <code>true</code>, the
+name is prefixed to the logged message.</dd>
+<dt>args</dt>
+<dd>Custom logger properties.</dd>
+</dl>
 
 ### raw (message: string, ...args: Array<any>): void
 
@@ -82,8 +86,12 @@ would do.
 
 #### Parameters
 
-  **message**: Message to be loggd
-  **args**: Additional arguments
+<dl>
+  <dt>message</dt>
+  <dd>Message to be logged</dd>
+  <dt>args</dt>
+  <dd>Additional arguments</dd>
+</dl>
 
 ### message (level: string, message: string, ...args: Array<any>): void
 
@@ -93,14 +101,32 @@ Note: usually is more convenient to call the logger's `level` function as in
 
 #### Parameters
 
-  **level**: The level name as defined in the levels options.
-  **message**: Message to be logged
-  **args**: Additional arguments
-  
+<dl>
+<dt>level</dt>
+<dd>The level name as defined in the levels options.</dd>
+<dt>message</dt>
+<dd>Message to be logged.</dd>
+<dt>args</dt>
+<dd>Additional arguments.</dd>
+</dl>
+
 ### warn (assert?: boolean, message: string, ...args: Array<any>): void
 
 Format and print a warning message. When an `assert` is provided, the message
 is conditionally printed based on the truthyness of the assertion.
+
+#### Parameters
+
+<dl>
+<dt>assert</dt>
+<dd>Assertion to be test for truthyness.</dd>
+<dt>message</dt>
+<dd>A warning message to be logged. If an assertion is specified, the message
+is printed only when the assertion pass.</dd>
+<dt>args</dt>
+<dd>Additional arguments.</dd>
+</dl>
+</dl>
 
 ### error (message: string|Error, ...args: Array<any>): void
 
@@ -108,9 +134,13 @@ Format and print an Error's message or a given `message` to the stderr.
 
 #### Parameters
 
-  **message**: A message to be logged or an Error object
-  **args**: Additional arguments
-
+<dl>
+<dt>message</dt> 
+<dd>A message to be logged or an Error object.</dd>
+<dt>args</dt>
+<dd>Additional arguments.</dd>
+</dl>
+  
 ### highlight (message: string, ...args: Array<any>): void
 
 Format and print the given `message` as highlighted. An
@@ -118,8 +148,12 @@ highlighted message is bold and do not print time information.
 
 #### Parameters
 
-  **message**: A message to be logged or an Error object
-  **args**: Additional arguments
+<dl>
+<dt>message</dt> 
+<dd>A message to be logged.</dd>
+<dt>args</dt>
+<dd>Additional arguments.</dd>
+</dl>
 
 ### clear (): void
 
@@ -135,5 +169,9 @@ Move the cursor up for the given number of lines.
 
 #### Parameters
 
-  **lines**: Number of lines to move the cursor up.
-  **clear**: Define if the lines being rewritten should be cleared
+<dl>
+<dt>lines</dt> 
+<dd>Number of lines to be rewritten.</dd>
+<dt>clear</dt>
+<dd>Define if the lines being rewritten must be cleared. Default to <em>true</em>.</dd>
+</dl>
