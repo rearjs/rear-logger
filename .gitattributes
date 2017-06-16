@@ -1,0 +1,6 @@
+src/ export-ignore
+config/ export-ignore
+__tests__/ export-ignore
+scripts/ export-ignore
+.travis.yml export-ignore
+Makefile export-ignore
