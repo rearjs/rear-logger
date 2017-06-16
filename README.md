@@ -75,7 +75,7 @@ Create a new logger with given `name` and options.
 <dt>name</dt>
 <dd>The logger name. When <code>showName</code> property is set to <code>true</code>, the
 name is prefixed to the logged message.</dd>
-<dt>args</dt>
+<dt>props</dt>
 <dd>Custom logger properties.</dd>
 </dl>
 
