@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.1.1] 2017-08-15
+## [0.1.1] (2017-08-15)
 
 ### :rocket: New Feature
 
@@ -9,7 +9,7 @@
   
 [#3]: https://github.com/rearjs/rear-logger/pull/3
 
-## [0.1.0] 2017-06-16
+## [0.1.0] (2017-06-16)
 
 ### :rocket: New Feature
 
