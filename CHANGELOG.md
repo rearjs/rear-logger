@@ -4,8 +4,10 @@
 
 ### :rocket: New Feature
 
-* Add the ability to hide and show the cursor by calling `hideCursor` and 
+* [#3] Add the ability to hide and show the cursor by calling `hideCursor` and 
   `showCursor` functions. ([@erremauro](https://github.com/erremauro)).
+  
+[#3]: https://github.com/rearjs/rear-logger/pull/3
 
 ## [0.1.0] 2017-06-16
 
