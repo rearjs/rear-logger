@@ -1,11 +1,20 @@
 # Change Log
 
+## [Unreleased]
+
+### :home: Internal
+
+* [#4] Add show and hide cursor tests. Add `isBrowser` mock, to control the current logger context via 
+  `process.env.REARTEST_IS_BROWSER` variable ([@erremauro](https://github.com/erremauro)).
+
+[#4]: https://github.com/rearjs/rear-logger/pull/4
+
 ## [0.1.1] (2017-08-15)
 
 ### :rocket: New Feature
 
 * [#3] Add the ability to hide and show the cursor by calling `hideCursor` and 
-  `showCursor` functions. ([@erremauro](https://github.com/erremauro)).
+  `showCursor` functions ([@erremauro](https://github.com/erremauro)).
   
 [#3]: https://github.com/rearjs/rear-logger/pull/3
 
@@ -18,5 +27,6 @@
    
   For example: `logger.warn(!user.isAuthenticated(), 'Permission denied')`
 
+[Unreleased]: https://github.com/rearjs/rear-logger/compare/0.1.1...HEAD
 [0.1.1]: https://github.com/rearjs/rear-logger/compare/0.1.0...0.1.1    
 [0.1.0]: https://github.com/rearjs/rear-logger/tree/0.1.0
