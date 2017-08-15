@@ -1,3 +1,5 @@
+/** @jest-environment node */
+var stripAnsi = require('strip-ansi');
 var RearLogger = require('../index');
 
 test('Should create logger', function () {
@@ -38,26 +40,26 @@ test('Should log error message to stderr', function () {
 });
 
 test('Should format message', function () {
-  var expected = '{color: blue}{} This should be formatted';
+  var expected = 'info This should be formatted';
   var mockStdOut = jest.fn();
   var logger = RearLogger('formatter', {
     stdout: mockStdOut
   });
 
   logger.info('This should be %s', 'formatted');
-  var actual = mockStdOut.mock.calls[0][0];
+  var actual = stripAnsi(mockStdOut.mock.calls[0][0]);
 
   expect(actual).toBe(expected);
 });
 
 test('Should warn based on TRUE assert', function () {
-  var expected = '{color: yellow}{} This should be formatted';
+  var expected = 'warn This should be formatted';
   var mockStdOut = jest.fn();
   var logger = RearLogger('formatter', {
     stdout: mockStdOut
   });
   logger.warn(1 > 0, 'This should be %s', 'formatted');
-  var actual = mockStdOut.mock.calls[0][0];
+  var actual = stripAnsi(mockStdOut.mock.calls[0][0]);
   
   expect(actual).toBe(expected);
 });
@@ -73,13 +75,35 @@ test('Should NOT warn based on FALSE assert', function () {
 });
 
 test('Should use standard warn when no assert specified', function () {
-  var expected = '{color: yellow}{} This should be formatted';
+  var expected = 'warn This should be formatted';
   var mockStdOut = jest.fn();
   var logger = RearLogger('formatter', {
     stdout: mockStdOut
   });
   logger.warn('This should be %s', 'formatted');
-  var actual = mockStdOut.mock.calls[0][0];
+  var actual = stripAnsi(mockStdOut.mock.calls[0][0]);
   
   expect(actual).toBe(expected);
+});
+
+test('Should hide terminal cursor', function () {
+  var ansiEscape = '\x1B[?25l';
+  var mockStdOut = jest.fn();
+  var logger = RearLogger('cursor-test', {
+    stdout: mockStdOut
+  });
+  logger.hideCursor();
+  var actual = mockStdOut.mock.calls[0][0];
+  expect(actual).toBe(ansiEscape);
+});
+
+test('Should show terminal cursor', function () {
+  var ansiEscape = '\x1B[?25h';
+  var mockStdOut = jest.fn();
+  var logger = RearLogger('cursor-test', {
+    stdout: mockStdOut
+  });
+  logger.showCursor();
+  var actual = mockStdOut.mock.calls[0][0];
+  expect(actual).toBe(ansiEscape);
 });
