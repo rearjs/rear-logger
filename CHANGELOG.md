@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-### :home: Internal
+### :house: Internal
 
 * [#4] Add show and hide cursor tests. Add `isBrowser` mock, to control the current logger context via 
   `process.env.REARTEST_IS_BROWSER` variable ([@erremauro](https://github.com/erremauro)).
