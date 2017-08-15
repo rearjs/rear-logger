@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [0.1.1] 2017-08-15
 
 ### :rocket: New Feature
 
@@ -18,5 +18,5 @@
    
   For example: `logger.warn(!user.isAuthenticated(), 'Permission denied')`
 
-[Unreleased]: https://github.com/rearjs/rear-logger/compare/0.1.0...HEAD    
+[0.1.1]: https://github.com/rearjs/rear-logger/compare/0.1.0...0.1.1    
 [0.1.0]: https://github.com/rearjs/rear-logger/tree/0.1.0
