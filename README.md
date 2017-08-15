@@ -175,3 +175,11 @@ Move the cursor up for the given number of lines.
 <dt>clear</dt>
 <dd>Define if the lines being rewritten must be cleared. Default to <em>true</em>.</dd>
 </dl>
+
+### hideCursor (): void
+
+Hide the cursor in the console.
+
+### showCursor (): void
+
+Restore cursor visibility in the console.

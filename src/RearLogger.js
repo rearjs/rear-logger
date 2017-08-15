@@ -19,7 +19,7 @@ declare type RearLoggerProps = {
   stderr?: Function
 }
 
-declare type RearLoggerTS = {
+declare type RearLoggerTime = {
   current: number,
   last: number,
   diff: number
@@ -44,13 +44,17 @@ class RearLogger {
   props: RearLoggerProps
   _loggerName: string
   _formatter: Formatter
-  _timestamps: RearLoggerTS
+  _timestamps: RearLoggerTime
   _levels: Object
   _firstClear: boolean
 
   constructor (name: string, props: RearLoggerProps) {
-    if (!name)
-      throw new Error('Show some love for your logger. Give it a name!')
+    if (!name) {
+      throw new ReferenceError(
+        'Show some love for your logger. Give it a name!'
+      )
+    }
+      
 
     this.name = name
     this.props = Object.assign({}, defaultProps, props)
@@ -195,6 +199,18 @@ class RearLogger {
     }
     rewrite += TTYCodes.CLEAR_LINE
     return this.raw(rewrite)
+  }
+  
+  hideCursor () {
+    if (!this.props.enabled || isBrowser) return
+    const ansiEscape = '\u001B[?25l'
+    return this.raw(ansiEscape)
+  }
+  
+  showCursor () {
+    if (!this.props.enabled || isBrowser) return
+    const ansiEscape = '\u001B[?25h'
+    return this.raw(ansiEscape)
   }
 
   toString (): string {
