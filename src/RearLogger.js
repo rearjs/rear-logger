@@ -4,6 +4,8 @@ const emoji = require('./emoji')
 const Formatter = require('./Formatter')
 const levels = require('./levels')
 const TTYCodes = require('./ttyCodes')
+const {EventEmitter} = require('events');
+const read = require('read');
 
 declare type RearLoggerProps = {
   enabled: boolean,
@@ -24,6 +26,8 @@ declare type RearLoggerTime = {
   last: number,
   diff: number
 }
+
+declare type Stdin = stream$Readable | tty$ReadStream;
 
 const defaultProps: RearLoggerProps = {
   enabled: true,
@@ -201,6 +205,70 @@ class RearLogger {
     return this.raw(rewrite)
   }
   
+  async prompt (...args: Array<any>): Promise<string> {
+    if (!this.props.enabled || isBrowser) return Promise.resolve('');
+    const typeError = new TypeError(
+      'Prompt expect an object or a string. Received: undefined'
+    );
+    if (!args) return Promise.reject(typeError);
+    
+    let message;
+    let readOptions = {};
+    
+    if (typeof args[0] === 'object') {
+      readOptions = args.shift()
+    }
+    
+    if (typeof args[0] === 'string') {
+      message = args.shift();
+    } else {
+      return Promise.reject(typeError);
+    }
+    
+    return new Promise((resolve, reject) => {
+      const messageText = this._formatter.format(message, ...args);
+      
+      Object.assign(readOptions, {
+        prompt: `${messageText.stringValue}`,
+        output: process.stdout,
+        input: this._getStdIn()
+      });
+            
+      read(readOptions, (err, answer) => {
+        if (err) return reject(err);
+        resolve(answer);
+      });
+    });
+  }
+  
+  async question (...args: Array<any>): Promise<string> {
+    if (!this.props.enabled || isBrowser) return Promise.resolve('');
+    const typeError = new TypeError(
+      'Question expect an object or a string. Received: undefined'
+    );
+    if (!args) return Promise.reject(typeError);
+    
+    if (typeof args[0] === 'string') {
+      let message = args.shift();
+      message = `%cquestion%c ${message}`
+      args = [message, 'dim', 'reset'].concat(args)
+    }
+    
+    if (typeof args[0] === 'object' && typeof args[1] === 'string') {
+      const readOpts = args.shift();
+      let message = args.shift();
+      message = `%cquestion%c ${message}`
+      args = [readOpts, message, 'dim', 'reset'].concat(args)
+    }
+    
+    try {
+      return await this.prompt(...args);
+    } catch (err) {
+      if (err instanceof TypeError) return Promise.reject(typeError);
+      return Promise.reject(err);
+    }
+  }
+  
   hideCursor () {
     if (!this.props.enabled || isBrowser) return
     const ansiEscape = '\u001B[?25l'
@@ -229,6 +297,21 @@ class RearLogger {
       if (postfix) message += '\n'
       process.stderr.write(message)
     }
+  }
+  
+  _getStdIn (): Stdin {
+    let stdin;
+    try {
+      stdin = process.stdin;
+    } catch (err) {
+      console.warn(err.message);
+      delete process.stdin;
+      // $FlowFixMe: this is valid!
+      process.stdin = new EventEmitter();
+      stdin = process.stdin;
+    }
+    
+    return stdin;
   }
 
   _stderr (postfix: boolean, str: string, ...args: Array<any>) {

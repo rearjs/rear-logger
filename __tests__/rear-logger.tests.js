@@ -107,3 +107,19 @@ test('Should show terminal cursor', function () {
   var actual = mockStdOut.mock.calls[0][0];
   expect(actual).toBe(ansiEscape);
 });
+
+test('Shuld prompt for question', function () {
+  var logger = RearLogger('question-test');
+  const expectedPrompt = 'question Do you like test?';
+  
+  expect.assertions(2);
+  
+  return logger.question('Do you like test?')
+    .then(result => {
+      const ansiPrompt = result.prompt;
+      const textPrompt = stripAnsi(ansiPrompt);
+      
+      expect(ansiPrompt).not.toEqual(expectedPrompt);
+      expect(textPrompt).toEqual(expectedPrompt);
+    });
+});

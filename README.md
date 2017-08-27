@@ -155,6 +155,43 @@ highlighted message is bold and do not print time information.
 <dd>Additional arguments.</dd>
 </dl>
 
+### async prompt (opts?: Object, message: string, ...args: Array<any>): Promise<string>
+
+Async prompt user for input in the console and resolve with the user answer.
+
+#### Parameters
+
+<dl>
+<dt>opts</dt>
+<dd>Optional <a href="https://www.npmjs.com/package/read">read</a> options</dd>
+<dt>message</dt>
+<dd>The question to be prompted</dd>
+<dt>args</dt>
+<dd>Style format arguments</dd>
+</dl>
+
+### async question (opts?: Object, message: string, ...args: Array<any>): Promise<string>
+
+Same as `prompt`, but prefix a `question` _level_ header to the message.
+
+#### Parameters
+
+<dl>
+<dt>opts</dt>
+<dd>Optional <a href="https://www.npmjs.com/package/read">read</a> options</dd>
+<dt>message</dt>
+<dd>The question to be prompted</dd>
+<dt>args</dt>
+<dd>Style format arguments</dd>
+</dl>
+
+#### Returns
+
+<dl>
+<dt>Promise<string></dt>
+<dd>Resolve with the user answer or reject</dd>
+</dl>
+
 ### clear (): void
 
 Clear the console
