@@ -1,1 +1,1 @@
-module.exports = process.env.REARTEST_IS_BROWSER;
+module.exports = process.env.REARTEST_IS_BROWSER
