@@ -110,6 +110,34 @@ Note: usually is more convenient to call the logger's `level` function as in
 <dd>Additional arguments.</dd>
 </dl>
 
+### debug (message: string, ...args: Array<any>): void
+
+Format and print a `debug` message only if the `DEBUG` environment variable
+filter is set.
+
+For example:
+
+```bash
+export DEBUG="firstLogger:*"
+```
+
+```javascript
+const firstLogger = require('logger')('firstLogger:section');
+const secondLogger = require('logger')('secondLogger:section');
+
+firstLogger.debug('This message will be printed to stdout');
+secondLogger.debug('This message will NOT be printed to stdout');
+```
+
+#### Parameters
+
+<dl>
+<dt>message</dt>
+<dd>Message to be logged.</dd>
+<dt>args</dt>
+<dd>Additional arguments.</dd>
+</dl>
+
 ### warn (assert?: boolean, message: string, ...args: Array<any>): void
 
 Format and print a warning message. When an `assert` is provided, the message
@@ -135,12 +163,12 @@ Format and print an Error's message or a given `message` to the stderr.
 #### Parameters
 
 <dl>
-<dt>message</dt> 
+<dt>message</dt>
 <dd>A message to be logged or an Error object.</dd>
 <dt>args</dt>
 <dd>Additional arguments.</dd>
 </dl>
-  
+
 ### highlight (message: string, ...args: Array<any>): void
 
 Format and print the given `message` as highlighted. An
@@ -149,7 +177,7 @@ highlighted message is bold and do not print time information.
 #### Parameters
 
 <dl>
-<dt>message</dt> 
+<dt>message</dt>
 <dd>A message to be logged.</dd>
 <dt>args</dt>
 <dd>Additional arguments.</dd>
@@ -207,7 +235,7 @@ Move the cursor up for the given number of lines.
 #### Parameters
 
 <dl>
-<dt>lines</dt> 
+<dt>lines</dt>
 <dd>Number of lines to be rewritten.</dd>
 <dt>clear</dt>
 <dd>Define if the lines being rewritten must be cleared. Default to <em>true</em>.</dd>
