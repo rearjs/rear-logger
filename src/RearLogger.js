@@ -58,7 +58,7 @@ class RearLogger {
         'Show some love for your logger. Give it a name!'
       )
     }
-      
+
 
     this.name = name
     this.props = Object.assign({}, defaultProps, props)
@@ -135,20 +135,20 @@ class RearLogger {
   log (message: string, ...args: Array<any>): void {
     return this.message.call(this, 'none', message || '', ...args)
   }
-  
+
   warn (...args: Array<any>): void {
     if (!args) return
     if (typeof args[0] === 'boolean' && !args[0]) return
-    
+
     let message = ''
-    
+
     if (typeof args[0] === 'boolean' &&  typeof args[1] === 'string' ) {
       args.splice(0, 1)
     }
-    
+
     const firstArg = args.splice(0, 1)
     message = firstArg[0]
-    
+
     return this.message.call(this, 'warn', message || '', ...args)
   }
 
@@ -164,6 +164,27 @@ class RearLogger {
     }
 
     return this.message.call(this, 'error', message || '', ...args)
+  }
+
+  debug (message: string, ...args: Array<any>): void {
+    if (!this.props.enabled) return
+    const pattern = isBrowser
+      ? localStorage.getItem('DEBUG')
+      : process.env.DEBUG;
+
+    const envDebug = pattern ? pattern.split(',') : [];
+    if (Array.isArray(envDebug)) {
+      const result = envDebug.filter(env => env.indexOf(this.name));
+      if (result.length > 0) {
+        result.forEach(env => {
+          if (env === "") return
+          const re = new RegExp(env);
+          if (re.test(this.name)) {
+            return this.message.call(this, 'debug', message || '', ...args)
+          }
+        });
+      }
+    }
   }
 
   highlight (message: string, ...args: Array<any>): void {
@@ -204,63 +225,63 @@ class RearLogger {
     rewrite += TTYCodes.CLEAR_LINE
     return this.raw(rewrite)
   }
-  
+
   async prompt (...args: Array<any>): Promise<string> {
     if (!this.props.enabled || isBrowser) return Promise.resolve('');
     const typeError = new TypeError(
       'Prompt expect an object or a string. Received: undefined'
     );
     if (!args) return Promise.reject(typeError);
-    
+
     let message;
     let readOptions = {};
-    
+
     if (typeof args[0] === 'object') {
       readOptions = args.shift()
     }
-    
+
     if (typeof args[0] === 'string') {
       message = args.shift();
     } else {
       return Promise.reject(typeError);
     }
-    
+
     return new Promise((resolve, reject) => {
       const messageText = this._formatter.format(message, ...args);
-      
+
       Object.assign(readOptions, {
         prompt: `${messageText.stringValue}`,
         output: process.stdout,
         input: this._getStdIn()
       });
-            
+
       read(readOptions, (err, answer) => {
         if (err) return reject(err);
         resolve(answer);
       });
     });
   }
-  
+
   async question (...args: Array<any>): Promise<string> {
     if (!this.props.enabled || isBrowser) return Promise.resolve('');
     const typeError = new TypeError(
       'Question expect an object or a string. Received: undefined'
     );
     if (!args) return Promise.reject(typeError);
-    
+
     if (typeof args[0] === 'string') {
       let message = args.shift();
       message = `%cquestion%c ${message}`
       args = [message, 'dim', 'reset'].concat(args)
     }
-    
+
     if (typeof args[0] === 'object' && typeof args[1] === 'string') {
       const readOpts = args.shift();
       let message = args.shift();
       message = `%cquestion%c ${message}`
       args = [readOpts, message, 'dim', 'reset'].concat(args)
     }
-    
+
     try {
       return await this.prompt(...args);
     } catch (err) {
@@ -268,13 +289,13 @@ class RearLogger {
       return Promise.reject(err);
     }
   }
-  
+
   hideCursor () {
     if (!this.props.enabled || isBrowser) return
     const ansiEscape = '\u001B[?25l'
     return this.raw(ansiEscape)
   }
-  
+
   showCursor () {
     if (!this.props.enabled || isBrowser) return
     const ansiEscape = '\u001B[?25h'
@@ -298,7 +319,7 @@ class RearLogger {
       process.stderr.write(message)
     }
   }
-  
+
   _getStdIn (): Stdin {
     let stdin;
     try {
@@ -310,7 +331,7 @@ class RearLogger {
       process.stdin = new EventEmitter();
       stdin = process.stdin;
     }
-    
+
     return stdin;
   }
 
