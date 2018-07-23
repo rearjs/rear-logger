@@ -91,8 +91,12 @@ class Formatter {
 
     const tokens = this._tokenize(str, args)
     const result: ParseResult = this._parseTokens(tokens);
+
     // prepend color args to args for browser compatibility
-    if (result.colorArgs.length > 0) args = result.colorArgs.concat(args)
+    if (result.colorArgs.length > 0) {
+      const applied = applyStyle(result.colorArgs);
+      args.push(applied)
+    }
 
     return {
       stringValue: this.props.disableCodeMap
@@ -115,6 +119,12 @@ class Formatter {
 
       parsed += token.content
     })
+
+    if (colorArgs.length > 0 && isBrowser()) {
+      colorArgs = colorArgs.map(function (colorArg) {
+       return applyStyle(colorArg.toString().split('_'))
+      });
+    }
 
     parsed = this._applyStyles(parsed, colorArgs)
 
@@ -143,8 +153,11 @@ class Formatter {
   _applyStyles (str: string, params: Array<any>): string {
     if (params.length === 0) return str
 
+    if (isBrowser()) return str;
+
     let index, content = ''
     const colorMap = []
+
     do {
       index = str.indexOf('%c')
       if (index === -1) continue
@@ -163,10 +176,7 @@ class Formatter {
 
       let styles = params.length > 0 ? params.shift().toString().split('_') : []
       let inner = str.slice(left, right)
-
-      let applied = isBrowser
-        ? applyStyle(styles)
-        : applyStyle(styles, inner)
+      let applied = applyStyle(styles, inner)
 
       if (i === 0 && left > 0) applied = str.slice(0, left) + applied
 
@@ -202,7 +212,7 @@ class Formatter {
         tag = str[i] + str[i + 1]
         specifier = str[i + 1]
         arg = tag === '%c'
-          ? colorParams.shift() || ''
+          ? this._getColorParam(colorParams)
           : params.shift() || ''
       }
       content += str[i]
@@ -218,6 +228,18 @@ class Formatter {
     }
 
     return tokens
+  }
+
+  _getColorParam (params: Array<any>) : string {
+    let colorParams = params.shift() || '';
+
+    if (Array.isArray(colorParams)) {
+      colorParams = isBrowser()
+          ? colorParams[1] || ''
+          : colorParams[0] || ''
+    }
+
+    return colorParams;
   }
 }
 

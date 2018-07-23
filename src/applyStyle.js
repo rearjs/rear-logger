@@ -2,17 +2,23 @@
 const isBrowser = require('./isBrowser')
 const ansiStyles = require('ansi-styles')
 const cssStyles = require('./cssStyles')
+const validStyles = Object.keys(cssStyles);
 
 function applyStyle (styles: Array<string>, str?: string): string {
   let i = styles.length
 
-  if (isBrowser) {
+  if (isBrowser()) {
     const css = []
     while (i--) {
-      const style = cssStyles[styles[i]]
-      if (style) css.push(style)
+      let style = cssStyles[styles[i]];
+      if (!style) {
+        style = styles[i]
+        if (validStyles.indexOf(styles[i]) !== -1) continue;
+      }
+
+      css.push(style)
     }
-    return '{' + css.join('; ') + '}'
+    return css.join('; ');
   }
 
   let string = str || ''
