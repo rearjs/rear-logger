@@ -151,6 +151,20 @@ show or hide this `message` based on space or comma-delimited names.
 
 The * character may be used as a wildcard. For example: `DEBUG=myLogger:*`
 
+For example:
+
+```bash
+export DEBUG="firstLogger:*"
+```
+
+```javascript
+const firstLogger = require('logger')('firstLogger:section');
+const secondLogger = require('logger')('secondLogger:section');
+
+firstLogger.debug('This message will be printed to stdout');
+secondLogger.debug('This message will NOT be printed to stdout');
+```
+
 **Note**: Set the `DEBUG` variable in the `localStorage` if you are using the
 library from a browser.
 

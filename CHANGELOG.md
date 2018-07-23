@@ -2,12 +2,6 @@
 
 ## [1.0.0] (2018-07-24)
 
-### :rocket: New Feature
-
-* [#6] Add `debug` function to print debug messages. A `DEBUG`
-environment variable or `localStorage` key is used to show or hide the messages
-based on space or comma-delimited names.
-
 ### :bug: Bug Fixes
 
 * [#7] Fix color formatting in browsers
@@ -18,6 +12,16 @@ based on space or comma-delimited names.
 
 [#6]: https://github.com/rearjs/rear-logger/pull/6
 [#7]: https://github.com/rearjs/rear-logger/pull/7
+
+## [0.3.0] (2018-07-07)
+
+### :rocket: New Feature
+
+* [#6] Add `debug` function to print debug messages. A `DEBUG`
+environment variable or `localStorage` key is used to show or hide the messages
+based on space or comma-delimited names.
+
+[#6]: https://github.com/rearjs/rear-logger/pull/6
 
 ## [0.2.0] (2017-08-27)
 
