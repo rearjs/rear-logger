@@ -10,6 +10,7 @@ const read = require('read');
 declare type RearLoggerProps = {
   enabled: boolean,
   showName: boolean,
+  nameColor?: Array<string>,
   showLevelName: boolean,
   showTimeLabel: boolean,
   showDiffLabel: boolean,
@@ -18,8 +19,15 @@ declare type RearLoggerProps = {
   disableCodeMap: boolean,
   levels: Object,
   stdout?: Function,
-  stderr?: Function
+  stdwarn?: Function,
+  stderr?: Function,
 }
+
+declare type FormatResult = {
+  stringValue: string,
+  args: Array<any>|string
+};
+
 
 declare type RearLoggerTime = {
   current: number,
@@ -32,6 +40,7 @@ declare type Stdin = stream$Readable | tty$ReadStream;
 const defaultProps: RearLoggerProps = {
   enabled: true,
   showName: false,
+  nameColor: undefined,
   showLevelName: true,
   showTimeLabel: false,
   showDiffLabel: false,
@@ -40,13 +49,14 @@ const defaultProps: RearLoggerProps = {
   disableCodeMap: false,
   levels: {},
   stdout: undefined,
+  stdwarn: undefined,
   stderr: undefined
 }
 
 class RearLogger {
   name: string
   props: RearLoggerProps
-  _loggerName: string
+  _loggerName: FormatResult
   _formatter: Formatter
   _timestamps: RearLoggerTime
   _levels: Object
@@ -58,7 +68,6 @@ class RearLogger {
         'Show some love for your logger. Give it a name!'
       )
     }
-
 
     this.name = name
     this.props = Object.assign({}, defaultProps, props)
@@ -74,13 +83,20 @@ class RearLogger {
 
     // Store a random colored version of the logger name to be printed
     // when `showName` prop is `true`
-    const rnd = (min, max) => Math.floor(Math.random() * (max - min) + min)
-    const colors = ['red', 'blue', 'green', 'yellow', 'magenta', 'cyan']
-    const rndNum = rnd(0, colors.length - 1)
-    const rndColor = colors[rndNum] + ''
-    this._loggerName = this._formatter
-      .format('%c' + this.name + ':', rndColor)
-      .stringValue
+    let nameColor = this.props.nameColor;
+    if (!nameColor) {
+      const rnd = (min, max) => Math.floor(Math.random() * (max - min) + min)
+      const colors = ['red', 'blue', 'green', 'yellow', 'magenta', 'cyan']
+      const rndNum = rnd(0, colors.length - 1)
+      const rndColor = colors[rndNum] + ''
+      nameColor = rndColor;
+    } else {
+      if (Array.isArray(nameColor)) {
+
+      }
+    }
+
+    this._loggerName = this._formatter.format('%c' + this.name + ':', nameColor)
 
     build(this._levels, this)
   }
@@ -110,25 +126,58 @@ class RearLogger {
     // Output an empty line if no message or arguments are provided
     if (!message && args.length === 0) return log(true, '')
 
+    let logArgs = [];
     const formatted = this._formatter.format(message, ...args)
 
-    if (this.props.showLevelName && typeof level === 'string' && level !== 'none') {
-      prefix = this._formatter
-        .format('%c' + level, this._levels[level] || 'white')
-        .stringValue + pad
+    let loggerName = ''
+    if (this.props.showName) {
+      loggerName = this._loggerName.stringValue + pad
+      logArgs = logArgs.concat(this._loggerName.args);
     }
 
-    let timeLabel = this.props.showTimeLabel ? this._timeLabel() + pad : ''
-    let diffLabel = this.props.showDiffLabel ? this._diffLabel() + pad : ''
+    // Format the prefix. If prefix has arguments (for examples: colorArgs)
+    // they will be attached to the main formatted.args prop
+    if (this.props.showLevelName && typeof level === 'string' && level !== 'none') {
+      const formattedPrefix = this._formatter.format(
+        '%c' + level,
+        this._levels[level] || ['white', 'color: black']
+      )
+
+      if (Array.isArray(formattedPrefix.args)) {
+        logArgs = logArgs.concat(formattedPrefix.args)
+      }
+
+      prefix = formattedPrefix.stringValue + pad
+    }
+
+    let timeLabel = ''
+    if (this.props.showTimeLabel) {
+      const formattedTimeLabel = this._timeLabel();
+      if (Array.isArray(formattedTimeLabel.args)) {
+        logArgs = logArgs.concat(formattedTimeLabel.args)
+      }
+      timeLabel = formattedTimeLabel.stringValue + pad
+    }
+
+    logArgs = logArgs.concat(formatted.args);
+
+    let diffLabel = ''
+    if (this.props.showDiffLabel) {
+      const formattedDiffLabel = this._diffLabel();
+      if (Array.isArray(formattedDiffLabel.args)) {
+        logArgs = logArgs.concat(formattedDiffLabel.args)
+      }
+      diffLabel = formattedDiffLabel.stringValue + pad
+    }
+
     let formattedMessage = this.props.showDiffLabel
       ? formatted.stringValue + pad
       : formatted.stringValue
-    let loggerName = this.props.showName ? this._loggerName + pad : ''
 
     log(
       true,
       `${loggerName}${timeLabel}${prefix}${formattedMessage}${diffLabel}`,
-      formatted.args
+      logArgs.filter(arg => arg !== undefined && arg !== "")
     )
   }
 
@@ -168,7 +217,7 @@ class RearLogger {
 
   debug (message: string, ...args: Array<any>): void {
     if (!this.props.enabled) return
-    const pattern = isBrowser
+    const pattern = isBrowser()
       ? localStorage.getItem('DEBUG')
       : process.env.DEBUG;
 
@@ -201,7 +250,7 @@ class RearLogger {
 
   clear (): void {
     if (!this.props.enabled) return
-    if (isBrowser) {
+    if (isBrowser()) {
       if (typeof console !== 'undefined' && console.clear){
         console.clear()
         return
@@ -217,7 +266,7 @@ class RearLogger {
   }
 
   rewriteLine (lines: number, clear?: boolean): void {
-    if (!this.props.enabled || isBrowser) return
+    if (!this.props.enabled || isBrowser()) return
     var rewrite = TTYCodes.MOVE_LEFT
     for (var i = 0; i < lines; i++) {
       rewrite += TTYCodes.MOVE_UP + (clear ? TTYCodes.CLEAR_LINE : '')
@@ -227,7 +276,7 @@ class RearLogger {
   }
 
   async prompt (...args: Array<any>): Promise<string> {
-    if (!this.props.enabled || isBrowser) return Promise.resolve('');
+    if (!this.props.enabled || isBrowser()) return Promise.resolve('');
     const typeError = new TypeError(
       'Prompt expect an object or a string. Received: undefined'
     );
@@ -263,7 +312,7 @@ class RearLogger {
   }
 
   async question (...args: Array<any>): Promise<string> {
-    if (!this.props.enabled || isBrowser) return Promise.resolve('');
+    if (!this.props.enabled || isBrowser()) return Promise.resolve('');
     const typeError = new TypeError(
       'Question expect an object or a string. Received: undefined'
     );
@@ -291,13 +340,13 @@ class RearLogger {
   }
 
   hideCursor () {
-    if (!this.props.enabled || isBrowser) return
+    if (!this.props.enabled || isBrowser()) return
     const ansiEscape = '\u001B[?25l'
     return this.raw(ansiEscape)
   }
 
   showCursor () {
-    if (!this.props.enabled || isBrowser) return
+    if (!this.props.enabled || isBrowser()) return
     const ansiEscape = '\u001B[?25h'
     return this.raw(ansiEscape)
   }
@@ -309,7 +358,7 @@ class RearLogger {
   _stdout (postfix: boolean, str: string, ...args: Array<any>) {
     if (typeof this.props.stdout === 'function') {
       this.props.stdout(str, ...args)
-    } else if (isBrowser) {
+    } else if (isBrowser()) {
       if (typeof console !== 'undefined') {
         console.log(str, ...args)
       }
@@ -339,7 +388,7 @@ class RearLogger {
     args = args || []
     if (typeof this.props.stderr === 'function') {
       this.props.stderr(str, ...args)
-    } else if (isBrowser) {
+    } else if (isBrowser()) {
       if (typeof console !== 'undefined') {
         console.error(str, ...args)
       }
@@ -352,9 +401,9 @@ class RearLogger {
 
   _stdwarn (postfix: boolean, str: string, ...args: Array<any>) {
     args = args || []
-    if (typeof this.props.stdout === 'function') {
-      this.props.stdout(str, ...args)
-    } else if (isBrowser) {
+    if (typeof this.props.stdwarn === 'function') {
+      this.props.stdwarn(str, ...args)
+    } else if (isBrowser()) {
       if (typeof console !== 'undefined' && console.warn) {
         console.warn(str, ...args)
       }
@@ -365,7 +414,7 @@ class RearLogger {
     }
   }
 
-  _diffLabel (): string {
+  _diffLabel (): FormatResult {
     const style = this._levels.hasOwnProperty('diffLabel')
       ? this._levels.diffLabel
       : 'dim_white'
@@ -381,10 +430,10 @@ class RearLogger {
       label = parseInt((diff / 1000 / 60), 10) + 'h'
     }
 
-    return this._formatter.format('%c' + label, style).stringValue
+    return this._formatter.format('%c' + label, style)
   }
 
-  _timeLabel (): string {
+  _timeLabel (): FormatResult {
     const style = this._levels.hasOwnProperty('diffLabel')
       ? this._levels.timeLabel
       : 'dim_white'
@@ -396,9 +445,7 @@ class RearLogger {
     const ss = normalize(date.getSeconds(), 10)
     const ms = normalize(date.getMilliseconds(), 100)
 
-    return this._formatter
-      .format(`%c[${hh}:${mm}:${ss}.${ms}]`, style)
-      .stringValue
+    return this._formatter.format(`%c[${hh}:${mm}:${ss}.${ms}]`, style)
   }
 
   _updateTimestamps (): void {
@@ -425,8 +472,9 @@ class RearLogger {
 function build (src: Object, dest: Object) {
   for (var prop in src) {
     if (src.hasOwnProperty(prop)) {
-      const propType = typeof src[prop]
-      if (propType === 'string' && typeof dest[prop] === 'undefined') {
+      const isValidProp = typeof src[prop] === 'string'
+        || Array.isArray(src[prop]);
+      if (isValidProp && typeof dest[prop] === 'undefined') {
         dest[prop] = createLogFunction(dest, prop)
       }
     }
